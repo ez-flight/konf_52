@@ -1,54 +1,63 @@
 import matplotlib.pyplot as plt
-
 import numpy as np
 from scipy.optimize import newton
 
-# Параметры системы
+# Параметры системы для S-диапазона
 R_earth = 6371e3  # Радиус Земли (м)
 H = 500e3         # Высота орбиты (м)
-lambda_ = 0.05    # Длина волны РСА (м, пример для C-диапазона)
+lambda_ = 0.094   # Длина волны РСА (9.4 см для S-диапазона)
 D_ant = 10.0      # Размер антенны (м)
 
 # Расчет ширины луча АФАР
 theta_beam = np.rad2deg(lambda_ / D_ant)  # Угол в градусах
 
-# Углы визирования (B_min и B_max)
-B_min = 20  # Минимальный угол (град)
-B_max = 50  # Максимальный угол (град)
-
-# Функция для расчета центрального угла phi
 def calculate_phi(B_deg):
+    """Расчет центрального угла через уравнение геометрии"""
     B_rad = np.deg2rad(B_deg)
     def equation(phi):
         return (R_earth + H) * np.sin(B_rad) - R_earth * np.sin(B_rad + phi)
+    
     try:
-        phi = newton(equation, x0=0.1, maxiter=100, tol=1e-6)
-        return phi
+        return newton(equation, x0=0.5, maxiter=100, tol=1e-6)
     except RuntimeError:
         return np.nan
 
-# Расчет полосы обзора
-phi_min = calculate_phi(B_min)
-phi_max = calculate_phi(B_max)
-delta_L = R_earth * (phi_max - phi_min) / 1e3  # В км
+# Расчет полосы обзора для диапазона углов
+theta_angles = np.linspace(24, 55, 100)
+swath_widths = []
 
-# Вывод результатов
-print(f"Ширина луча АФАР: {theta_beam:.2f}°")
-print(f"Полоса обзора ΔL: {delta_L:.1f} км")
-
-B_angles = np.linspace(24, 55, 50)
-delta_L_values = []
-for B in B_angles:
-    phi = calculate_phi(B)
+for theta in theta_angles:
+    phi = calculate_phi(theta)
     if not np.isnan(phi):
-        delta_L_values.append(R_earth * phi / 1e3)
+        swath_km = R_earth * phi / 1000
+        swath_widths.append(swath_km)
     else:
-        delta_L_values.append(0)
+        swath_widths.append(0)
 
-plt.figure(figsize=(10, 6))
-plt.plot(B_angles, delta_L_values, 'b-', linewidth=2)
-plt.title('Полоса обзора ΔL vs. Угол визирования B')
-plt.xlabel('Угол визирования B, градусы')
-plt.ylabel('ΔL, км')
-plt.grid(True)
+# Визуализация
+plt.figure(figsize=(12, 6))
+plt.plot(theta_angles, swath_widths, 'darkorange', linewidth=2)
+plt.title('Зависимость ширины полосы обзора от угла визирования\n(S-диапазон, λ=9.4 см)', 
+          fontsize=14, pad=20)
+plt.xlabel('Угол визирования [град]', fontsize=12)
+plt.ylabel('Ширина полосы [км]', fontsize=12)
+plt.grid(True, linestyle='--', alpha=0.7)
+
+# Пример расчета для 30°
+theta_example = 30
+phi_example = calculate_phi(theta_example)
+swath_example = R_earth * phi_example / 1000
+plt.scatter(theta_example, swath_example, c='red', s=80)
+plt.annotate(f'θ={theta_example}°: {swath_example:.1f} км', 
+             (theta_example, swath_example),
+             xytext=(25, -25),
+             textcoords='offset points',
+             arrowprops=dict(arrowstyle='->'),
+             fontsize=10)
+
+plt.tight_layout()
+plt.savefig('swath_s-band.png', dpi=300, bbox_inches='tight')
 plt.show()
+
+print(f"Ширина луча антенны: {theta_beam:.2f}°")
+print(f"Полоса обзора при θ=30°: {swath_example:.1f} км")
