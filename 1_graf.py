@@ -1,10 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import newton
+import os
+
+# Создаем папку для результатов
+os.makedirs('result', exist_ok=True)
 
 # Параметры системы для S-диапазона
 R_earth = 6371e3  # Радиус Земли (м)
-H = 500e3         # Высота орбиты (м)
+H = 520e3         # Высота орбиты (м)
 lambda_ = 0.094   # Длина волны РСА (9.4 см для S-диапазона)
 D_ant = 10.0      # Размер антенны (м)
 
@@ -43,21 +47,13 @@ plt.xlabel('Угол визирования [град]', fontsize=12)
 plt.ylabel('Ширина полосы [км]', fontsize=12)
 plt.grid(True, linestyle='--', alpha=0.7)
 
-# Пример расчета для 30°
-theta_example = 30
-phi_example = calculate_phi(theta_example)
-swath_example = R_earth * phi_example / 1000
-plt.scatter(theta_example, swath_example, c='red', s=80)
-plt.annotate(f'θ={theta_example}°: {swath_example:.1f} км', 
-             (theta_example, swath_example),
-             xytext=(25, -25),
-             textcoords='offset points',
-             arrowprops=dict(arrowstyle='->'),
-             fontsize=10)
+
 
 plt.tight_layout()
-plt.savefig('swath_s-band.png', dpi=300, bbox_inches='tight')
+# Сохранение в файл
+plt.savefig('result/1_swath_s-band.png', 
+           dpi=300, 
+           bbox_inches='tight')
 plt.show()
 
 print(f"Ширина луча антенны: {theta_beam:.2f}°")
-print(f"Полоса обзора при θ=30°: {swath_example:.1f} км")
