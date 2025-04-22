@@ -21,9 +21,10 @@ plt.plot(angles, swath_width)
 plt.fill_between(angles, 10, swath_width, color='lightgreen', alpha=0.3, label='Рабочая зона')
 plt.title('Зависимость полосы обзора от угла визирования')
 plt.xlabel('Угол визирования (градусы)')
-plt.ylabel('Ширина полосы обзора (метры)')
+plt.ylabel('Ширина полосы обзора (км)')
 plt.grid()
 # Добавление меток для углов 24 и 55
 plt.axvline(24, color='green', linestyle=':', linewidth=2, label=f'$\\theta_{{min}}$ = 24° (КА Кондор ФКА)')    # Новая линия
 plt.axvline(55, color='purple', linestyle=':', linewidth=2, label=f'$\\theta_{{max}}$ = 55° (КА Кондор ФКА)')   # Новая линия
+plt.savefig('2_Prob/2_work_zone.png', dpi=300)
 plt.show()

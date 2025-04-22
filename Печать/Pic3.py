@@ -22,19 +22,18 @@ f_d = (2 * V / lambda_) * np.sin(psi_rad)
 plt.figure(figsize=(12, 6))
 plt.plot(psi_deg, f_d / 1e3, 'm-', linewidth=2)  # Переводим в кГц
 plt.title('Доплеровская частота в зависимости от угла рыскания', fontsize=14)
-plt.xlabel('Угол рыскания (ψ), градусы', fontsize=12)
-plt.ylabel('Доплеровская частота (f_d), кГц', fontsize=12)
+plt.xlabel('Угол рыскания, градусы', fontsize=12)
+plt.ylabel('Доплеровская частота, кГц', fontsize=12)
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.axhline(0, color='black', linewidth=1)
 
 # Добавление формулы и параметров
-plt.text(-2, 2, 
-         r'$f_d = \frac{2V}{\lambda} \sin\psi$' + '\n' +
+plt.text(2, 2, 
          f'V = {V/1e3:.1f} км/с\n' +
          r'$\lambda = 0.094$ м',
          fontsize=12,
          bbox=dict(facecolor='white', alpha=0.8))
 
 plt.tight_layout()
-plt.savefig('Prob/5_f_d_vs_psi.png', dpi=300)
+plt.savefig('Печать/Picture_3.png', dpi=300)
 plt.show()
