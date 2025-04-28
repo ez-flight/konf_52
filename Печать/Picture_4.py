@@ -1,5 +1,9 @@
 """
 Модуль для анализа зависимости расстояния до спутника от угла визирования
+
+Модель взята из статей , что не получилось, расчитать максимальный и 
+инимальный угол визировния, пока что данные в литературе вываливают 
+расчеты в плоскость загоризонт, углы визирования взяты для КА Кондор ФКА
 """
 
 import math
@@ -130,7 +134,7 @@ def calculate_orbital_data(tle_1: str, tle_2: str, dt_start: datetime,
     
     return R_0_list, y_grad_list
 
-def plot_orbital_data(R_0: list, y_grad: list, R_min: float, save_path: str = None):
+def plot_orbital_data(R_0: list, y_grad: list, save_path: str = None):
     """
     Визуализация данных и сохранение графика
     
@@ -162,7 +166,7 @@ def plot_orbital_data(R_0: list, y_grad: list, R_min: float, save_path: str = No
         return
     
     # Расчет граничных значений расстояний
-#    R_min = np.min(R_filtered)
+    R_min = np.min(R_filtered)
     R_max = np.max(R_filtered)
     
     # Определение углов при экстремальных расстояниях
@@ -275,14 +279,15 @@ def _test():
     """
     Тестовая функция для проверки работы модуля
     """
+
     # Загрузка TLE из файла для спутника с номером 56756
     s_name, tle_1, tle_2 = read_tle_base_file(56756)
     
+    # Задаем Максимальное значение для отображения в графике угла визирования
+    thetra_max = 60
+
     # Координаты наземного объекта (Санкт-Петербург)
     target_pos = (59.95, 30.316667, 12)
-    # Получение расчетных значений минимального и максимального угла визирования
-    R_min, thetra_max = calculate_theoretical_bounds()
-
 
     # Настройка временного интервала
     start_time = datetime(2024, 2, 21, 3, 0, 0)
@@ -302,10 +307,10 @@ def _test():
 
     # Генерация имени файла с временной меткой
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    save_path = f"results/plot_{timestamp}.png"
+    save_path = f"Печать/Picture_4_{timestamp}.png"
     
     # Визуализация и сохранение
-    plot_orbital_data(R_0, y_grad, R_min, save_path)
+    plot_orbital_data(R_0, y_grad, save_path)
 
 if __name__ == "__main__":
     # Точка входа при запуске скрипта
