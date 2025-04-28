@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 from pyorbital.orbital import Orbital
-
 # Локальные модули
 from calc_cord import get_xyzv_from_latlon
 from read_TBF import read_tle_base_file
