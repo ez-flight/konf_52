@@ -74,7 +74,7 @@ def read_tle_base_file(norad_id):
             if satellite.satnum == norad_id:
                 return norad_id, tle1, tle2
         except Exception as e:
-            logger.warning("Ошибка валидации онлайн-TLE: {str(e)}")
+            logger.warning(f"Ошибка валидации онлайн-TLE: {str(e)}")
     
     # Если онлайн-данные недоступны - пробуем файл
     name, tle1, tle2 = read_tle_from_file(norad_id)

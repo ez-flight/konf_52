@@ -174,3 +174,25 @@ cython_debug/
 .pypirc
 result/
 good/
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.svg
+*.ico
+*.tiff
+*.tif
+*.webp
+*.PNG
+*.JPG
+*.JPEG
+*.GIF
+*.BMP
+*.SVG
+*.ICO
+*.TIFF
+*.TIF
+*.WEBP

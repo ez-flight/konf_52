@@ -88,15 +88,16 @@ def calculate_orbital_data(tle_1: str, tle_2: str, dt_start: datetime,
     # Распаковка координат наземного объекта
     lat_t, lon_t, alt_t = pos_gt
     
-    # Генерация временных меток с заданным шагом
-    time_steps = np.arange(dt_start, dt_end, delta).astype(datetime)
-    
     # Инициализация списков для результатов
     R_0_list = []
     y_grad_list = []
     
+    # Генерация временных меток с заданным шагом
+    current_time = dt_start
+    
     # Основной цикл расчетов
-    for dt in time_steps:
+    while current_time < dt_end:
+        dt = current_time
         # Получение координат спутника в инерциальной системе
         X_s, Y_s, Z_s, _, _, _ = get_position(tle_1, tle_2, dt)
         
@@ -112,10 +113,10 @@ def calculate_orbital_data(tle_1: str, tle_2: str, dt_start: datetime,
         R_0 = math.sqrt(delta_X**2 + delta_Y**2 + delta_Z**2)
         
         # Rs - расстояние от центра Земли до спутника
-        R_s = math.hypot(X_s, Y_s, Z_s)
+        R_s = math.sqrt(X_s**2 + Y_s**2 + Z_s**2)
         
         # Re - расстояние от центра Земли до объекта
-        R_e = math.hypot(X_t, Y_t, Z_t)
+        R_e = math.sqrt(X_t**2 + Y_t**2 + Z_t**2)
         
         # Расчет угла визирования по формуле косинусов
         try:
@@ -138,15 +139,14 @@ def calculate_orbital_data(tle_1: str, tle_2: str, dt_start: datetime,
         if 15 < y_grad < 57 and R_0 < R_e:
             R_0_list.append(R_0)
             y_grad_list.append(y_grad)
+        
+        # Переход к следующему временному шагу
+        current_time += delta
     
     return R_0_list, y_grad_list
 
 def plot_orbital_data(R_0: list, y_grad: list, save_path: str = None):
     """Визуализация данных с теоретическими границами"""
-    if not R_0 or not y_grad:
-        print("Нет данных для построения графика")
-        return
-
     # Проверка наличия данных
     if not R_0 or not y_grad:
         print("Ошибка: Нет данных для построения графика")
@@ -236,7 +236,7 @@ def plot_orbital_data(R_0: list, y_grad: list, save_path: str = None):
           ylabel='Расстояние R₀ (км)',
           title='Сравнение реальных и теоретических параметров',
           xlim=(20, 60),
-          ylim=(min(R_min_theory, R_min_meas)*0.95, max(R_max_theory, R_max_meas)*1.05))
+          ylim=(min(R_min_theory, R_min)*0.95, max(R_max_theory, R_max)*1.05))
     
     ax.grid(True, alpha=0.3)
     ax.legend(loc='upper right', fontsize=10)

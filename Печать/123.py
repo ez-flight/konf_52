@@ -111,7 +111,6 @@ def calculate_orbital_data(tle_1: str, tle_2: str, dt_start: datetime,
 
             # Фильтрация данных
             if 20 < y_grad < 70 and R_0 < R_e:  # Расширенный диапазон для анализа
-                print (R_e)
                 R_0_list.append(R_0)
                 y_grad_list.append(y_grad)
 
